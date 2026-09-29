@@ -1,0 +1,63 @@
+// options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/python
+// Ablageort: .devcontainer/devcontainer.json (eine einzige Datei, kein Dockerfile nötig)
+{
+  "name": "EidPy 2026",
+
+  // Major-Tag "3": nur nicht-brechende Image-Updates. trixie = Debian 13.
+  // Für maximale Stabilität den Digest anhängen: ...3.14-trixie@sha256:<digest>
+  "image": "mcr.microsoft.com/devcontainers/python:3-3.14-trixie",
+
+  "containerEnv": {
+    // uv-Cache (Home) und .venv (Workspace) liegen auf verschiedenen Dateisystemen;
+    // ohne diese Zeile erscheinen Hardlink-Warnungen bei jedem uv sync.
+    "UV_LINK_MODE": "copy"
+  },
+
+  // uv, ruff und nbstripout systemweit in einem Kommando (aus PyPI, keine Community-Features).
+  // Systemweit heißt: unabhängig von der .venv und von pyproject.toml der Studierenden;
+  // `uv sync` entfernt sie nicht. uv ist fest gepinnt (0.12.19 laut aktueller Astral-Doku,
+  // vorher prüfen). TODO für maximale Stabilität: nach einem Testlauf auch ruff und nbstripout
+  // pinnen (ruff==<Version> nbstripout==<Version>, Versionen per `ruff --version` /
+  // `nbstripout --version`). Bewusst anheben, z. B. einmal pro Semester.
+  "onCreateCommand": "pip install --no-cache-dir uv==0.12.19 ruff==0.16.9 nbstripout==0.9.1",
+
+  // Läuft nach onCreateCommand; bei Codespaces-Prebuilds vorab (postCreateCommand nicht).
+  // Legt .venv im Repo-Wurzelverzeichnis an (neben pyproject.toml), mit dem Terminal-Prompt
+  // "eidpy2026" (pro Kurs anpassen). Der Guard [ -d .venv ] verhindert, dass eine vorhandene
+  // .venv bei einem erneuten Lauf überschrieben wird; uv verlangt dafür künftig --clear.
+  // --frozen: Lockfile wird 1:1 übernommen, keine neue Auflösung, kein Netzwerk-Overhead.
+  // Ohne pyproject.toml passiert nichts.
+  "updateContentCommand": "if [ -f pyproject.toml ]; then [ -d .venv ] || uv venv --prompt eidpy2026; if [ -f uv.lock ]; then uv sync --frozen; else uv sync; fi; fi",
+
+  // nbstripout entfernt Notebook-Outputs beim `git add` (auch bei GitDoc-Auto-Commits).
+  // Der Filter liegt in .git/config, also lokal pro Klon: Ein neu kopiertes Template kennt ihn nicht.
+  // Ohne diese Konfiguration committet Git Outputs STILLSCHWEIGEND. Darum bei jedem Start:
+  // installieren, falls noch nicht vorhanden (idempotent), und am Ende prüfen. Schlägt die Prüfung
+  // fehl, ist das im Erstellungs-Log sichtbar.
+  // Voraussetzung im Template: die Datei .gitattributes (siehe Übergabe). nbstripout selbst
+  // kommt systemweit aus dem onCreateCommand, der Filter zeigt damit nicht auf die .venv.
+  "postStartCommand": "git config --local --get filter.nbstripout.clean > /dev/null || nbstripout --install; git config --local --get filter.nbstripout.clean > /dev/null",
+
+  "customizations": {
+    "vscode": {
+      "settings": {
+        // Doppelt hält besser: greift beim Verbinden mit dem Container.
+        // Die Kopie in .vscode/settings.json greift zusätzlich bei lokaler Nutzung.
+        "chat.disableAIFeatures": true,
+        "github.copilot.enable": { "*": false }
+      },
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance", // Typprüfung; explizit gelistet statt sich auf die Abhängigkeit zu verlassen
+        "charliermarsh.ruff",
+        "ms-toolsai.jupyter",
+        "vsls-contrib.gitdoc",
+
+        // Copilot deinstallieren (Präfix "-")
+        "-github.copilot",
+        "-github.copilot-chat"
+      ]
+    }
+  }
+}

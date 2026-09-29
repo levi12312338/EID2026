@@ -1,0 +1,70 @@
+// Ablageort: .vscode/settings.json
+{
+  // --- KI-Funktionen aus (greift auch bei lokaler Nutzung des Repos) ---
+  "chat.disableAIFeatures": true,
+  "github.copilot.enable": {
+    "*": false
+  },
+  // --- Python ---
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+  // .venv in neuen Terminals automatisch aktivieren (Prompt-Präfix, python/pip aus der .venv)
+  "python.terminal.activateEnvironment": true,
+  // Typprüfung wird im Kursverlauf verwendet (Pylance; Stufen: off < basic < standard < strict)
+  "python.analysis.typeCheckingMode": "basic",
+  // --- Speichern & Formatieren ---
+  // onFocusChange: GitDoc sieht gespeicherte Dateien, und Format-on-Save läuft
+  // (bei "afterDelay" wird beim Auto-Save nicht formatiert).
+  "files.autoSave": "onFocusChange",
+  "editor.formatOnSave": true,
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff"
+  },
+  // Bewusst NICHT aktiv: fixAll beim Speichern entfernt ungenutzte Imports,
+  // die Einsteiger gerade erst hingeschrieben haben. Ggf. in späteren Wochen:
+  // "editor.codeActionsOnSave": { "source.fixAll.ruff": "explicit" },
+  // --- Jupyter: Notebooks und Interactive Window (Python-Dateien mit # %%-Zellen) ---
+  // Voraussetzung: ipykernel als dev-dependency (uv add --dev ipykernel), sonst fragt Jupyter
+  // Studierende beim ersten Ausführen nach der Installation.
+  // Umschalt+Enter führt in .py-Dateien die Auswahl bzw. Zeile im Interactive Window aus.
+  "jupyter.interactiveWindow.textEditor.executeSelection": true,
+  // "notebook.formatOnSave.enabled": true,
+  // --- GitDoc: soll unbemerkt laufen ---
+  "gitdoc.enabled": true,
+  "gitdoc.autoCommitDelay": 30000,
+  "gitdoc.autoPush": "onCommit",
+  "gitdoc.autoPull": "onPush",
+  "gitdoc.pullOnOpen": true,
+  "gitdoc.commitValidationLevel": "none", // sonst werden Commits bei Fehlern in "Probleme" stillschweigend übersprungen
+  "gitdoc.ai.enabled": false, // KI-Commit-Nachrichten brauchen Copilot
+  "git.autofetch": true,
+  // --- Explorer / Suche: Ballast ausblenden ---
+  "files.exclude": {
+    "**/*.egg-info": true,
+    "**/__pycache__": true,
+    ".venv": true,
+    "node_modules": true,
+    "uv.lock": true,
+    ".devcontainer": true,
+    ".vscode": true,
+    "pyproject.toml": true,
+    ".gitignore": true,
+    "cleanup.sh": true,
+    ".gitattributes": true
+  },
+  "search.exclude": {
+    "**/*.egg-info": true,
+    "**/__pycache__": true,
+    "uv.lock": true,
+    ".devcontainer": true,
+    ".vscode": true,
+    "pyproject.toml": true,
+    ".gitignore": true,
+    "cleanup.sh": true,
+    ".gitattributes": true
+  },
+  "explorer.excludeGitIgnore": true,
+  "files.watcherExclude": {
+    "**/.venv/**": true,
+    "**/*.egg-info/**": true
+  }
+}

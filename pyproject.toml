@@ -1,0 +1,38 @@
+[project]
+name = "EidPy_2026"
+version = "0.1.0"
+description = "A template for EidPy 2026."
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = ["ipykernel", "requests>=2.32.5"]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+extend-include = ["*.ipynb"]
+exclude = [
+    ".git",
+    ".venv",
+    ".ruff_cache",
+    "__pycache__",
+    "data",
+    "datasets",
+    "models",
+    ".ipynb_checkpoints",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "N"]
+ignore = ["E501"]
+
+[tool.ruff.format]
+docstring-code-format = true
+quote-style = "double"
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+"**/*.ipynb" = ["E402"]
